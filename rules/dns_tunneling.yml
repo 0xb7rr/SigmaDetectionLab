@@ -1,0 +1,37 @@
+title: Potential DNS Tunneling via Abnormally Long or High-Frequency Queries
+id: 8f4c2e55-3a9d-4b7f-8c1e-5d8f0a2b55e5
+status: experimental
+description: >
+  Detects DNS query patterns consistent with tunneling tools (iodine, dnscat2, DNSExfiltrator):
+  unusually long query names (data-encoded subdomains), high query volume to a single
+  parent domain in a short window, or queries for TXT/NULL record types, which are
+  favored for carrying encoded payloads.
+author: Kamal Ashraf (0xb7r)
+date: 2026/09/14
+references:
+  - https://attack.mitre.org/techniques/T1071/004/
+  - https://unit42.paloaltonetworks.com/dns-tunneling/
+logsource:
+  category: dns
+  definition: 'Requires DNS query logs from resolver, firewall, or Zeek dns.log'
+detection:
+  selection_long_query:
+    query_length|gte: 60
+  selection_suspect_type:
+    query_type:
+      - 'TXT'
+      - 'NULL'
+  filter_known_cdn:
+    query|endswith:
+      - '.amazonaws.com'
+      - '.akamai.net'
+      - '.cloudfront.net'
+  condition: (selection_long_query or selection_suspect_type) and not filter_known_cdn
+falsepositives:
+  - Legitimate email security (SPF/DKIM/DMARC) TXT record lookups
+  - CDN and cloud provider health-check subdomains with long randomized labels
+level: medium
+tags:
+  - attack.command_and_control
+  - attack.exfiltration
+  - attack.t1071.004

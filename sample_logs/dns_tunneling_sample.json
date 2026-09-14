@@ -1,0 +1,38 @@
+[
+  {
+    "note": "Malicious: long base32-encoded exfil subdomain typical of dnscat2/iodine",
+    "expected_detection": true,
+    "query": "4a6f6e6b6172645333486d6c7166794f5a4c68.tunnel.evil-c2.net",
+    "query_length": 66,
+    "query_type": "A",
+    "src_ip": "10.10.14.55",
+    "TimeCreated": "2026-09-14T03:30:00Z"
+  },
+  {
+    "note": "Malicious: TXT record used to carry encoded C2 response data",
+    "expected_detection": true,
+    "query": "cmd.evil-c2.net",
+    "query_length": 15,
+    "query_type": "TXT",
+    "src_ip": "10.10.14.55",
+    "TimeCreated": "2026-09-14T03:30:05Z"
+  },
+  {
+    "note": "Documented false positive: legitimate SPF TXT lookup still fires the rule because it only checks record type, not content - see falsepositives section of the rule and tune before production use",
+    "expected_detection": true,
+    "query": "corp.local",
+    "query_length": 10,
+    "query_type": "TXT",
+    "src_ip": "10.20.5.12",
+    "TimeCreated": "2026-09-14T09:00:00Z"
+  },
+  {
+    "note": "Benign: long randomized CloudFront subdomain, filtered as known CDN",
+    "expected_detection": false,
+    "query": "d3f8g9h2j4k5l6.cloudfront.net",
+    "query_length": 68,
+    "query_type": "A",
+    "src_ip": "10.20.5.12",
+    "TimeCreated": "2026-09-14T09:02:00Z"
+  }
+]

@@ -1,0 +1,40 @@
+title: LOLBin Abuse - certutil Used to Download or Decode Payload
+id: 9d2a6f33-1c7b-4e5d-b0a4-3f8e2d6c33c3
+status: experimental
+description: >
+  certutil.exe is a legitimate Windows certificate utility that is frequently abused
+  by attackers to download remote files (-urlcache) or decode base64-encoded payloads
+  (-decode / -decodehex) to disk, bypassing tools that only flag known downloader
+  binaries. This is a well-documented Living-Off-The-Land technique.
+author: Kamal Ashraf (0xb7r)
+date: 2026/09/14
+references:
+  - https://attack.mitre.org/techniques/T1105/
+  - https://attack.mitre.org/techniques/T1218/011/
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+logsource:
+  product: windows
+  category: process_creation
+  definition: 'Requires Sysmon Event ID 1 or Windows Security Event ID 4688 with command-line auditing enabled'
+detection:
+  selection_process:
+    Image|endswith: '\certutil.exe'
+  selection_download:
+    CommandLine|contains:
+      - '-urlcache'
+      - '-URLCache'
+      - '-verifyctl'
+  selection_decode:
+    CommandLine|contains:
+      - '-decode'
+      - '-decodehex'
+  condition: selection_process and (selection_download or selection_decode)
+falsepositives:
+  - Legitimate certificate management scripts run by PKI/IT administrators
+  - Software packaging pipelines that use certutil for hashing rather than download/decode
+level: high
+tags:
+  - attack.command_and_control
+  - attack.defense_evasion
+  - attack.t1105
+  - attack.t1218.011

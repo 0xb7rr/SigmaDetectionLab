@@ -1,0 +1,49 @@
+title: Suspicious Encoded or Obfuscated PowerShell Command
+id: 7c9e4d21-5b3a-4f8e-8a2d-1e9f6c4b22b2
+status: experimental
+description: >
+  Detects PowerShell invocations using flags and patterns commonly associated with
+  obfuscation and defense evasion: -EncodedCommand / -enc, -WindowStyle Hidden,
+  -ExecutionPolicy Bypass, IEX combined with download cradles, or heavy use of
+  string concatenation/char-code tricks used to defeat static signature detection.
+author: Kamal Ashraf (0xb7r)
+date: 2026/09/14
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+  - https://attack.mitre.org/techniques/T1027/
+logsource:
+  product: windows
+  category: process_creation
+  definition: 'Requires Sysmon Event ID 1 or Windows Security Event ID 4688 with command-line auditing enabled'
+detection:
+  selection_process:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_encoded:
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-enc '
+      - '-e '
+  selection_hidden:
+    CommandLine|contains:
+      - '-WindowStyle Hidden'
+      - '-w hidden'
+      - '-ExecutionPolicy Bypass'
+      - '-nop'
+  selection_download_cradle:
+    CommandLine|contains:
+      - 'IEX'
+      - 'DownloadString'
+      - 'Net.WebClient'
+      - 'Invoke-Expression'
+  condition: selection_process and (selection_encoded or (selection_hidden and selection_download_cradle))
+falsepositives:
+  - Legitimate admin scripts and scheduled tasks that use -EncodedCommand for safe argument passing
+  - Software deployment tools (SCCM, Intune) that hide PowerShell windows for silent installs
+level: high
+tags:
+  - attack.execution
+  - attack.defense_evasion
+  - attack.t1059.001
+  - attack.t1027

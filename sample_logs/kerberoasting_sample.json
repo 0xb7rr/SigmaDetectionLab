@@ -1,0 +1,42 @@
+[
+  {
+    "note": "Malicious: attacker requesting RC4 TGS for SPN account - Rubeus-style kerberoast",
+    "expected_detection": true,
+    "EventID": 4769,
+    "TicketEncryptionType": "0x17",
+    "TargetUserName": "svc_sqlreporting",
+    "ServiceName": "MSSQLSvc/db01.corp.local:1433",
+    "IpAddress": "10.10.14.55",
+    "TimeCreated": "2026-09-14T02:13:41Z"
+  },
+  {
+    "note": "Malicious: same attacker sweeping a second SPN seconds later",
+    "expected_detection": true,
+    "EventID": 4769,
+    "TicketEncryptionType": "0x17",
+    "TargetUserName": "svc_webapp",
+    "ServiceName": "HTTP/webapp01.corp.local",
+    "IpAddress": "10.10.14.55",
+    "TimeCreated": "2026-09-14T02:13:47Z"
+  },
+  {
+    "note": "Benign: normal AES256 TGS request for a workstation logon",
+    "expected_detection": false,
+    "EventID": 4769,
+    "TicketEncryptionType": "0x12",
+    "TargetUserName": "jsmith",
+    "ServiceName": "HOST/ws-0231.corp.local",
+    "IpAddress": "10.20.5.12",
+    "TimeCreated": "2026-09-14T09:01:02Z"
+  },
+  {
+    "note": "Benign: RC4 request but for a machine account (filtered - legacy printer server auth)",
+    "expected_detection": false,
+    "EventID": 4769,
+    "TicketEncryptionType": "0x17",
+    "TargetUserName": "PRINTSRV01$",
+    "ServiceName": "HOST/printsrv01.corp.local",
+    "IpAddress": "10.20.5.40",
+    "TimeCreated": "2026-09-14T09:15:00Z"
+  }
+]

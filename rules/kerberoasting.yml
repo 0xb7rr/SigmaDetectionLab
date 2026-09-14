@@ -1,0 +1,33 @@
+title: Potential Kerberoasting Activity via RC4 TGS Requests
+id: 3a1f2b10-0e4c-4b6a-9d0a-6f2c1e7a11a1
+status: experimental
+description: >
+  Detects Kerberos service ticket (TGS) requests using the weak RC4-HMAC (etype 0x17)
+  encryption type. Kerberoasting tools (Rubeus, GetUserSPNs.py, Impacket) commonly
+  request RC4 tickets because they are faster to crack offline than AES-encrypted ones.
+  A spike of these events from a single account against many different SPNs is a strong
+  Kerberoasting indicator.
+author: Kamal Ashraf (0xb7r)
+date: 2026/09/14
+references:
+  - https://attack.mitre.org/techniques/T1558/003/
+  - https://adsecurity.org/?p=3458
+logsource:
+  product: windows
+  service: security
+  definition: 'Requires Windows Security Auditing, Event ID 4769 (A Kerberos service ticket was requested)'
+detection:
+  selection_eventid:
+    EventID: 4769
+  selection_weak_crypto:
+    TicketEncryptionType: '0x17'
+  filter_machine_accounts:
+    TargetUserName|endswith: '$'
+  condition: selection_eventid and selection_weak_crypto and not filter_machine_accounts
+falsepositives:
+  - Legitimate service accounts on legacy systems that only support RC4
+  - Misconfigured domain policy that has not enforced AES for service accounts
+level: medium
+tags:
+  - attack.credential_access
+  - attack.t1558.003
